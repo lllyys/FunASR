@@ -25,6 +25,58 @@
 
 <a name="highlights"></a>
 
+## docker镜像快速构建与使用
+1. 构建镜像
+    ```
+    docker build \
+    --build-arg HTTP_PROXY=http://localhost:7890 \
+    --build-arg HTTPS_PROXY=http://localhost:7890 \
+    --build-arg NO_PROXY=localhost,127.0.0.1 \
+    --network=host -t funasr-nano-github:260102 .
+    ```
+2. docker compose 拉起(注意挂载路径)
+    ```
+    docker compose up -d
+    ```
+3. 下载权重
+    ```
+    modelscope download --model FunAudioLLM/Fun-ASR-Nano-2512 --local_dir ./FunAudioLLM/Fun-ASR-Nano-2512
+    ```
+    ```
+    modelscope download --model iic/speech_fsmn_vad_zh-cn-16k-common-pytorch --local_dir ./iic/speech_fsmn_vad_zh-cn-16k-common-pytorch
+    ```
+4. 下载测试数据（可选）
+    ```
+    wget https://isv-data.oss-cn-hangzhou.aliyuncs.com/ics/MaaS/ASR/test_audio/vad_example.wav
+    ```
+4. 执行推理脚本
+    ```
+    from funasr import AutoModel
+
+    model_dir = "FunAudioLLM/Fun-ASR-Nano-2512"
+
+    import time
+
+    wav_path = 'vad_example.wav'
+    model = AutoModel(
+        model=model_dir,
+        # vad_model="fsmn-vad",
+        vad_model="iic/speech_fsmn_vad_zh-cn-16k-common-pytorch",
+        vad_kwargs={"max_single_segment_time": 30000},
+        device="cuda:0",    
+    )
+    start = time.perf_counter()
+    res = model.generate(input=[wav_path], cache={}, batch_size_s=0)
+    elapsed_s = time.perf_counter() - start
+    print(f"inference_time_s={elapsed_s:.4f}")
+    text = res[0]["text"]
+    print(text)
+    ```
+    ```
+    python test-funasr.py 
+    ```
+
+
 ## Highlights
 
 - FunASR is a fundamental speech recognition toolkit that offers a variety of features, including speech recognition (ASR), Voice Activity Detection (VAD), Punctuation Restoration, Language Models, Speaker Verification, Speaker Diarization and multi-talker ASR. FunASR provides convenient scripts and tutorials, supporting inference and fine-tuning of pre-trained models.
