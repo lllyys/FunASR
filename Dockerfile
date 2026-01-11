@@ -4,7 +4,7 @@ ENV PIP_NO_CACHE_DIR=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-WORKDIR /app
+WORKDIR /FunASR
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \

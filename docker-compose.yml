@@ -22,5 +22,8 @@ services:
       - NO_PROXY=localhost,127.0.0.1
       - no_proxy=localhost,127.0.0.1
     volumes:
-      - ../../a:/app
+      - /home/workspace/projects/stt/FunAudioLLM:/FunASR/FunAudioLLM
+      - /home/workspace/projects/stt/iic:/FunASR/iic
+      - /home/workspace/projects/stt/vad_example.wav:/FunASR/vad_example.wav
+      - /home/workspace/projects/stt/src:/FunASR/src
     command: bash
